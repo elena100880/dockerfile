@@ -127,6 +127,11 @@ php -V  - инфо об установленном XDebug
 wget https://get.symfony.com/cli/installer -O - | bash
 sudo mv /home/ub20/.symfony/bin/symfony /usr/local/bin/symfony
 
+######### install composer
+
+
+
+
 
 
 
