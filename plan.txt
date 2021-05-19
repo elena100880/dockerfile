@@ -122,7 +122,10 @@ sudo apt-get install git
 ssudo apt-get install php-xdebug
 php -V  - инфо об установленном XDebug
 
-1
+
+################################ install Symfony CLI:
+wget https://get.symfony.com/cli/installer -O - | bash
+sudo mv /home/ub20/.symfony/bin/symfony /usr/local/bin/symfony
 
 
 ################################ install Symfony CLI:
