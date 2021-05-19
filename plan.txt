@@ -1,21 +1,23 @@
 ﻿
-###########запуск в pr3
+########### постройка образа в папке с Докерфайлом:
 docker build . -t php:7.4-apache-xdebug
 docker build . -t php:8.0-apache-xdebug
 
-docker run -p -d 80:80 -v "$PWD":/var/www  -w="/var/www"   php:8.0-apache-xdebug  composer create-project symfony/website-skeleton symp1
-docker run -p -d 80:80 -v "$PWD":/var/www  -w="/var/www"   php:7.4-apache-xdebug  composer create-project symfony/website-skeleton symp1
+создание проекта:
+docker run -p -d 80:80 -v "$PWD":/var/www  -w="/var/www"   php:8.0-apache-xdebug  composer create-project symfony/website-skeleton название папки для проекта
+docker run -p -d 80:80 -v "$PWD":/var/www  -w="/var/www"   php:7.4-apache-xdebug  composer create-project symfony/website-skeleton название папки для ПРОЕКТА
 
-###########переименование public в html
-cd symp \
-sudo mv public html
-
-########запуск в symp1
-docker run -d -p 80:80 -v "$PWD":/var/www --name oo  php:7.4-apache-xdebug 
+######## запуск проекта в папке проекта:
+docker run -d -p 80:80 -v "$PWD":/var/www --name oo  php:7.4-apache-xdebug
 docker run -d -p 80:80 -v "$PWD":/var/www --name oo  php:8.0-apache-xdebug
 docker exec -it oo /bin/bash
 
-#########удаление образов.контейнеров
+########### переименование public в html:
+cd symp \
+sudo mv public html
+
+
+######### удаление образов, контейнеров:
 docker rmi -f $(docker images -a -q) - удаление всех образов
 docker rm $(docker ps -a -q)
 
@@ -25,17 +27,26 @@ docker image prune -a
 docker rmi -f $(docker images --filter dangling=true -q) - - очистка образов кеша слоев -т.е. недействительных образов
 
 
+########### миграции
+php bin/console doctrine:database:create
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
 
 
 ########## гит
-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
 git init
 git status
 git add . - Добавит все папки в гит
 git commit -m "com1"
 git log
 
+git config --global credential.helper store
+git config --unset credential.helper  
 
+git remote add origin <link to rep>
+git remote -v
+git push origin master -u
+git clone <link to rep>
 
 
 
@@ -75,7 +86,46 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 # 2. Verify that Docker Engine is installed correctly by running the hello-world image.
 sudo docker run hello-world
 
+sudo adduser ub20 docker - и перегрузится -  чтобы каждый раз не ставить sudo перед командой docker
 
+
+
+Установки на реальный Linux
+----------------------------
+################################ install PHP:
+sudo add-apt-repository ppa:ondrej/php
+sudo apt update
+sudo apt install php8.0 - сразу и Апач ставит
+удаление Апач:  sudo apt-get --purge remove 'apache2*'
+                sudo apt autoremove
+php -m - проверить установленные модули
+php -i  - содержание php.ini
+
+расширения (без них Composer install не срабатывает):
+sudo apt install php-{bz2,cgi,curl,intl,dev,fpm,gd,imagick,mbstring,mysql,xml,zip}
+
+
+
+
+################################ install Composer:
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+sudo php composer-setup.php --install-dir=/usr/bin --filename=composer
+php -r "unlink('composer-setup.php');"
+
+composer -V - инфо о композере
+
+
+################################ install GIT:
+sudo apt-get install git
+
+################################ install XDebug:
+ssudo apt-get install php-xdebug
+php -V  - инфо об установленном XDebug
+
+
+################################ install Symfony CLI:
+wget https://get.symfony.com/cli/installer -O - | bash
+sudo mv /home/ub20/.symfony/bin/symfony /usr/local/bin/symfony
 
 
 
