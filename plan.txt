@@ -4,8 +4,8 @@ docker build . -t php:7.4-apache-xdebug
 docker build . -t php:8.0-apache-xdebug
 
 создание проекта:
-docker run -p -d 80:80 -v "$PWD":/var/www  -w="/var/www"   php:8.0-apache-xdebug  composer create-project symfony/website-skeleton название папки для проекта
-docker run -p -d 80:80 -v "$PWD":/var/www  -w="/var/www"   php:7.4-apache-xdebug  composer create-project symfony/website-skeleton название папки для ПРОЕКТА
+docker run -d -p  80:80 -v "$PWD":/var/www  -w="/var/www"   php:8.0-apache-xdebug  composer create-project symfony/website-skeleton название папки для проекта
+docker run -d -p 80:80 -v "$PWD":/var/www  -w="/var/www"   php:7.4-apache-xdebug  composer create-project symfony/website-skeleton название папки для ПРОЕКТА
 
 ######## запуск проекта в папке проекта:
 docker run -d -p 80:80 -v "$PWD":/var/www --name oo  php:7.4-apache-xdebug
@@ -15,6 +15,19 @@ docker exec -it oo /bin/bash
 ########### переименование public в html:
 cd symp \
 sudo mv public html
+
+и в composer.json проверить, чтобы было html:
+ "extra": {
+        "symfony": {
+            "allow-contrib": true,   //true, чтобы апач-пак поставить
+            "require": "5.2.*"
+        },
+        "public-dir": "html"
+    }
+
+перед установкой - вернуть папку public, т.к. установщик туда кинет htaccess, потом его нужно перекинуть в html папку
+composer req symfony/apache-pack
+
 
 
 ######### удаление образов, контейнеров:
@@ -27,10 +40,14 @@ docker image prune -a
 docker rmi -f $(docker images --filter dangling=true -q) - - очистка образов кеша слоев -т.е. недействительных образов
 
 
-########### миграции
+########### makers
+composer req --dev symfony/maker-bundle
 php bin/console doctrine:database:create
 php bin/console make:migration
 php bin/console doctrine:migrations:migrate
+
+php bin/console make:entity
+hp bin/console make:form
 
 
 ########## гит
@@ -47,6 +64,12 @@ git remote add origin <link to rep>
 git remote -v
 git push origin master -u
 git clone <link to rep>
+
+
+
+############### rights
+sudo chmod 777 <file>
+sudo chmod 777 <dir> -R
 
 
 
@@ -128,11 +151,7 @@ wget https://get.symfony.com/cli/installer -O - | bash
 sudo mv /home/ub20/.symfony/bin/symfony /usr/local/bin/symfony
 
 
-################################ install Symfony CLI:
-wget https://get.symfony.com/cli/installer -O - | bash
-sudo mv /home/ub20/.symfony/bin/symfony /usr/local/bin/symfony
 
-######### install composer
 
 
 
