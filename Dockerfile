@@ -14,6 +14,7 @@ RUN apt-get update -yqq && \
     
 # Install php extensions
 RUN docker-php-ext-install pdo_mysql
+RUN docker-php-ext-install pdo_sqlite
 RUN docker-php-ext-install opcache
 RUN docker-php-ext-install calendar
 RUN docker-php-ext-install bcmath

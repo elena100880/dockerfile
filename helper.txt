@@ -3,20 +3,41 @@
 docker build . -t php:7.4-apache-xdebug
 docker build . -t php:8.0-apache-xdebug
 
-создание проекта:
-docker run -d -p  80:80 -v "$PWD":/var/www  -w="/var/www"   php:8.0-apache-xdebug  composer create-project symfony/website-skeleton название папки для проекта
-docker run -d -p 80:80 -v "$PWD":/var/www  -w="/var/www"   php:7.4-apache-xdebug  composer create-project symfony/website-skeleton название папки для ПРОЕКТА
+
 
 ######## запуск проекта в папке проекта:
 docker run -d -p 80:80 -v "$PWD":/var/www --name oo  php:7.4-apache-xdebug
 docker run -d -p 80:80 -v "$PWD":/var/www --name oo  php:8.0-apache-xdebug
 docker exec -it oo /bin/bash
 
-########### переименование public в html:
-cd symp \
-sudo mv public html
 
-и в composer.json проверить, чтобы было html:
+
+
+
+########### подготовка проекта
+
+!!!!! создание проекта:
+docker run -d -p  80:80 -v "$PWD":/var/www  -w="/var/www"   php:8.0-apache-xdebug  composer create-project symfony/website-skeleton название папки для проекта
+docker run -d -p 80:80 -v "$PWD":/var/www  -w="/var/www"   php:7.4-apache-xdebug  composer create-project symfony/website-skeleton название папки для ПРОЕКТА
+
+
+!!!! sudo chmod 777 <dir> -R - доступ к проекту
+
+!!!!!! добавление pathMappings в launch.json:
+ {
+            "name": "Listen for Xdebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9003,
+            
+            "pathMappings": {
+                "/var/www": "${workspaceRoot}"
+            }
+
+        },
+
+
+!! и в composer.json проверить, чтобы был раздел с public-dir: html:
  "extra": {
         "symfony": {
             "allow-contrib": true,   //true, чтобы апач-пак поставить
@@ -25,8 +46,21 @@ sudo mv public html
         "public-dir": "html"
     }
 
-перед установкой - вернуть папку public, т.к. установщик туда кинет htaccess, потом его нужно перекинуть в html папку
+!! установить htaccess:
 composer req symfony/apache-pack
+
+!! переименование public в html:
+sudo mv public html
+
+
+!! разные допчасти
+composer req symfony/form
+composer req symfony/orm-pack  - доктрина
+composer req symfony/maker-bundle
+composer req symfony/security-bundle
+
+
+
 
 
 
@@ -49,6 +83,8 @@ php bin/console doctrine:migrations:migrate
 php bin/console make:entity
 hp bin/console make:form
 
+php bin/console cache:clear
+
 
 ########## гит
 git init
@@ -62,21 +98,22 @@ git config --unset credential.helper
 
 git remote add origin <link to rep>
 git remote -v
-git push origin master -u
+git branch -M main
+git push -u origin main
+
 git clone <link to rep>
 
 
 
-############### rights
+############### LINUX
 sudo chmod 777 <file>
 sudo chmod 777 <dir> -R
 
 
 
 
-"pathMappings": {
-                "/var/www/html": "${workspaceRoot}"
-            }
+
+
 
 
         
@@ -126,6 +163,7 @@ php -i  - содержание php.ini
 
 расширения (без них Composer install не срабатывает):
 sudo apt install php-{bz2,cgi,curl,intl,dev,fpm,gd,imagick,mbstring,mysql,xml,zip}
+sudo apt-get install php-sqlite3
 
 
 
@@ -154,6 +192,61 @@ sudo mv /home/ub20/.symfony/bin/symfony /usr/local/bin/symfony
 
 
 
+
+
+############################## Apache
+sudo systemctl start apache2
+sudo systemctl stop apache2
+sudo systemctl restart apache2
+
+sudo apt-get purge 'apache*'
+
+
+
+
+
+
+#################### установка MySQL
+sudo apt install mysql-server
+sudo mysql_secure_installation - установка паролей
+
+sudo mysql:
+SELECT user,authentication_string,plugin,host FROM mysql.user;
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+FLUSH PRIVILEGES;
+
+mysql -u root -p - вход для рута вместо sudo mysql
+
+systemctl status mysql.service - проверка, запущен ли сервер
+sudo mysqladmin -p -u root version
+
+sudo systemctl start mysql - запуск сервера МуSQL
+
+
+#################### установка phpMyAdmin  - ставит Апач тоже
+sudo apt-get install phpmyadmin
+при установке пропустить создание юзера, т.к. создан рут при установке Mysql
+
+sudo gedit /etc/apache2/apache2.conf - вписать вверху файла Include /etc/phpmyadmin/apache.conf - чтобы не было NOT Found
+sudo systemctl restart apache2
+sudo apt-get install libapache2-mod-php - чтобы не показывало скрипт
+
+!! будет вылазить ошибка:
+"Deprecation Notice in ./libraries/classes/Di/ReflectorItem.php#82
+ Method ReflectionParameter::getClass() is deprecated"
+This is most likely caused by using PHP 8 and PHPMyAdmin < v5 either upgrade you PHPMyAdmin to 5.0 or higher or downgrade your PHP to 7
+
+!! поэтому обновим версию
+wget https://files.phpmyadmin.net/phpMyAdmin/5.1.1/phpMyAdmin-5.1.1-all-languages.zip
+unzip phpMyAdmin-*-all-languages.zip
+
+содержимое распакованного файла скопируем в /usr/share/phpmyadmin, - предварительно там все старое удалив
+sudo systemctl restart apache2
+
+удаление:
+sudo dpkg -P phpmyadmin  
+sudo rm -f /etc/apache2/conf.d/phpmyadmin.conf 
+sudo apt-get purge phpmyadmin
 
 
 
