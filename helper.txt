@@ -150,6 +150,8 @@ sudo adduser ub20 docker - и перегрузится -  чтобы кажды�
 
 
 
+
+
 Установки на реальный Linux
 ----------------------------
 ################################ install PHP:
@@ -180,8 +182,8 @@ composer -V - инфо о композере
 sudo apt-get install git
 
 ################################ install XDebug:
-ssudo apt-get install php-xdebug
-php -V  - инфо об установленном XDebug
+sudo apt-get install php-xdebug
+php -v  - инфо об установленном XDebug
 
 
 ################################ install Symfony CLI:

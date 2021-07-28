@@ -31,18 +31,20 @@ RUN pecl channel-update pecl.php.net
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
 
+
+
 #enable remote debugging by adding to php.ini :
 #for XDebug 2 - RUN echo "xdebug.remote_enable=on" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.mode=debug" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini 
 
 #for XDebug 2 - RUN echo "xdebug.remote_autostart=on" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini
-RUN echo "xdebug.start_with_request=yes" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini 
+# RUN echo "xdebug.start_with_request=yes" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini 
 
 #for XDebug 2 - RUN echo "xdebug.remote_connect_back=on" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini 
-RUN echo "xdebug.discover_client_host=on" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini 
+RUN echo "xdebug.discover_client_host=on" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini
+# RUN echo "xdebug.client_host=127.0.0.1" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini 
 
 RUN echo "xdebug.client_port=9003" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini  
-
 
 #for XDebug 2 - RUN echo "xdebug.remote_log=\"/tmp/xdebug.log\"" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.log=\"/tmp/xdebug.log\"" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini

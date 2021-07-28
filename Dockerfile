@@ -40,6 +40,7 @@ RUN echo "xdebug.start_with_request=yes" >>  $PHP_INI_DIR/conf.d/docker-php-ext-
 
 #for XDebug 2 - RUN echo "xdebug.remote_connect_back=on" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini 
 RUN echo "xdebug.discover_client_host=on" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini 
+RUN echo "xdebug.client_host=127.0.0.1" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini 
 
 RUN echo "xdebug.client_port=9003" >>  $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini  
 
