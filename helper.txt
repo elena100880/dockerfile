@@ -1,11 +1,13 @@
 ﻿
-########### постройка образа в папке с Докерфайлом:
+########### постройка образа в папке с Докерфайлом:  ###############
+           -----------------------------
 docker build . -t php:7.4-apache-xdebug
 docker build . -t php:8.0-apache-xdebug
 
 
 
-######## запуск проекта в папке проекта:
+######## запуск проекта в папке проекта:  #############
+        ----------------------------------   
 docker run -d -p 80:80 -v "$PWD":/var/www --name oo  php:7.4-apache-xdebug
 docker run -d -p 80:80 -v "$PWD":/var/www --name oo  php:8.0-apache-xdebug
 docker exec -it oo /bin/bash
@@ -14,16 +16,20 @@ docker exec -it oo /bin/bash
 
 
 
-########### подготовка проекта
+########### подготовка проекта  #############
+           ---------------------
 
 !!!!! создание проекта:
+------------------------
 docker run -d -p  80:80 -v "$PWD":/var/www  -w="/var/www"   php:8.0-apache-xdebug  composer create-project symfony/website-skeleton название папки для проекта
 docker run -d -p 80:80 -v "$PWD":/var/www  -w="/var/www"   php:7.4-apache-xdebug  composer create-project symfony/website-skeleton название папки для ПРОЕКТА
 
 
 !!!! sudo chmod 777 <dir> -R - доступ к проекту
+-----------------------------------------------
 
 !!!!!! добавление pathMappings в launch.json:
+---------------------------------------------
  {
             "name": "Listen for Xdebug",
             "type": "php",
@@ -38,6 +44,7 @@ docker run -d -p 80:80 -v "$PWD":/var/www  -w="/var/www"   php:7.4-apache-xdebug
 
 
 !! и в composer.json проверить, чтобы был раздел с public-dir: html:
+--------------------------------------------------------------------
  "extra": {
         "symfony": {
             "allow-contrib": true,   //true, чтобы апач-пак поставить
@@ -47,34 +54,59 @@ docker run -d -p 80:80 -v "$PWD":/var/www  -w="/var/www"   php:7.4-apache-xdebug
     }
 
 !! установить htaccess:
+------------------------
 composer req symfony/apache-pack
 
 !! переименование public в html:
+-------------------------------
 sudo mv public html
 
 
 !! разные допчасти
+--------------------
 composer req symfony/form
 composer req symfony/orm-pack  - доктрина
 composer req symfony/maker-bundle
 composer req symfony/security-bundle
 
 
+!! execute .sh scripts
+--------------------------
+chmod ugo+x script.sh           - (in folder with script)
+
+execute:
+ ./script.sh                    - (in folder with script)
 
 
 
 
-######### удаление образов, контейнеров:
+
+
+######### DOCKER  удаление образов, контейнеров:#######################
+        ---------------------------------
+docker rmi <name of image>        
+
 docker rmi -f $(docker images -a -q) - удаление всех образов
-docker rm $(docker ps -a -q)
-
-docker rmi $(docker images -f dangling=true -q)
-docker image prune -a
-
 docker rmi -f $(docker images --filter dangling=true -q) - - очистка образов кеша слоев -т.е. недействительных образов
+docker rmi $(docker images -f dangling=true -q)
+docker image prune -a     -удаление неиспользуемых образов с тегами
 
 
-########### makers
+docker rm <name of container>
+docker rm $(docker ps -a -q)   -all containers
+docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)    -остановка и удаление всех контейнеров
+
+
+docker network rm MyOverlayNetwork
+docker network prune    - удалление всех неиспользуемых сетей
+
+
+docker system prune   - удалит все остановленные контейнеры,  изображения и сети:
+
+
+
+########### makers  ##############
+           ---------
 composer req --dev symfony/maker-bundle
 php bin/console doctrine:database:create
 php bin/console make:migration
@@ -86,7 +118,8 @@ hp bin/console make:form
 php bin/console cache:clear
 
 
-########## гит
+########## гит  ###############
+          -------
 git init
 git status
 git add . - Добавит все папки в гит
@@ -105,22 +138,20 @@ git clone <link to rep>
 
 
 
-############### LINUX
+############### LINUX #############3
+              ------- 
 sudo chmod 777 <file>
 sudo chmod 777 <dir> -R
 
 
 
-
-
-
-
-
         
         
-####################!!install docker - https://docs.docker.com/engine/install/ubuntu/#install-from-a-package
+#################### !!install docker - https://docs.docker.com/engine/install/ubuntu/#install-from-a-package  ############################
+                     -----------------
 
 #SET UP THE REPOSITORY
+----------------------
 # 1. Update the apt package index and install packages to allow apt to use a repository over HTTPS:
 sudo apt-get update
 sudo apt-get install \
@@ -138,7 +169,9 @@ echo \
   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   
+  
 #INSTALL DOCKER ENGINE
+----------------------
 # 1. Update the apt package index, and install the latest version of Docker Engine and containerd, or go to the next step to install a specific version:
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io  
@@ -151,10 +184,13 @@ sudo adduser ub20 docker - и перегрузится -  чтобы кажды�
 
 
 
+===============================
+Установки на реальный Linux - |
+===============================
+===============================
 
-Установки на реальный Linux
-----------------------------
-################################ install PHP:
+######################### install PHP: #########3
+                         ---------------
 sudo add-apt-repository ppa:ondrej/php
 sudo apt update
 sudo apt install php8.0 - сразу и Апач ставит
@@ -170,7 +206,8 @@ sudo apt-get install php-sqlite3
 
 
 
-################################ install Composer:
+################################ install Composer:  #####################
+                               -------------------
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 sudo php composer-setup.php --install-dir=/usr/bin --filename=composer
 php -r "unlink('composer-setup.php');"
@@ -178,15 +215,18 @@ php -r "unlink('composer-setup.php');"
 composer -V - инфо о композере
 
 
-################################ install GIT:
+################################  install GIT:  ###########
+                              --------------------
 sudo apt-get install git
 
-################################ install XDebug:
+#########################  install XDebug:  #############
+                       ---------------------
 sudo apt-get install php-xdebug
 php -v  - инфо об установленном XDebug
 
 
-################################ install Symfony CLI:
+#########################   install Symfony CLI:  ################
+                       ---------------------------
 wget https://get.symfony.com/cli/installer -O - | bash
 sudo mv /home/ub20/.symfony/bin/symfony /usr/local/bin/symfony
 
@@ -194,9 +234,8 @@ sudo mv /home/ub20/.symfony/bin/symfony /usr/local/bin/symfony
 
 
 
-
-
-############################## Apache
+##################   Apache   ##################
+                 -----------
 sudo systemctl start apache2
 sudo systemctl stop apache2
 sudo systemctl restart apache2
@@ -208,7 +247,8 @@ sudo apt-get purge 'apache*'
 
 
 
-#################### установка MySQL
+#################### установка MySQL ######################################
+                  ------------------------
 sudo apt install mysql-server
 sudo mysql_secure_installation - установка паролей
 
@@ -225,7 +265,10 @@ sudo mysqladmin -p -u root version
 sudo systemctl start mysql - запуск сервера МуSQL
 
 
-#################### установка phpMyAdmin  - ставит Апач тоже
+
+
+#################### установка phpMyAdmin  - ставит Апач тоже #################################
+                   --------------------------------------------
 sudo apt-get install phpmyadmin
 при установке пропустить создание юзера, т.к. создан рут при установке Mysql
 
@@ -234,11 +277,13 @@ sudo systemctl restart apache2
 sudo apt-get install libapache2-mod-php - чтобы не показывало скрипт
 
 !! будет вылазить ошибка:
+--------------------------
 "Deprecation Notice in ./libraries/classes/Di/ReflectorItem.php#82
  Method ReflectionParameter::getClass() is deprecated"
 This is most likely caused by using PHP 8 and PHPMyAdmin < v5 either upgrade you PHPMyAdmin to 5.0 or higher or downgrade your PHP to 7
 
-!! поэтому обновим версию
+!! поэтому обновим версию:
+---------------------------
 wget https://files.phpmyadmin.net/phpMyAdmin/5.1.1/phpMyAdmin-5.1.1-all-languages.zip
 unzip phpMyAdmin-*-all-languages.zip
 
@@ -246,9 +291,113 @@ unzip phpMyAdmin-*-all-languages.zip
 sudo systemctl restart apache2
 
 удаление:
+---------
 sudo dpkg -P phpmyadmin  
 sudo rm -f /etc/apache2/conf.d/phpmyadmin.conf 
 sudo apt-get purge phpmyadmin
+
+
+
+
+          ===========
+========================================================
+============ ELASTIC ===================================
+========================================================
+
+####################  ElasticSearch  ##################################
+                     ################
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -   -import key
+
+
+You may need to install the apt-transport-https package on Debian before proceeding:
+------------------------------------------------------------------------------------
+sudo apt-get install apt-transport-https
+
+
+Save the repository definition to /etc/apt/sources.list.d/elastic-7.x.list:
+--------------------------------------------------------------------------
+echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-7.x.list
+
+
+instalation:
+-----------
+sudo apt-get update && sudo apt-get install elasticsearch
+
+
+Download and install the Debian package manually:
+------------------------------------------------
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.13.4-amd64.deb
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.13.4-amd64.deb.sha512
+shasum -a 512 -c elasticsearch-7.13.4-amd64.deb.sha512 
+sudo dpkg -i elasticsearch-7.13.4-amd64.deb
+
+
+sudo systemctl start elasticsearch.service
+sudo systemctl stop elasticsearch.service
+
+
+Checking that Elasticsearch is runningedit:
+-------------------------------------------
+  ## You can test that your Elasticsearch node is running by sending an HTTP request to port 9200 on localhost:
+curl http://127.0.0.1:9200   -in terminal
+http://127.0.0.1:9200    - in browser
+
+  ## which should give you a response something like this:
+
+{
+  "name" : "Cp8oag6",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "AT69_T_DTp-1qgIJlatQqA",
+  "version" : {
+    "number" : "7.13.4",
+    "build_flavor" : "default",
+    "build_type" : "tar",
+    "build_hash" : "f27399d",
+    "build_date" : "2016-03-30T09:51:41.449Z",
+    "build_snapshot" : false,
+    "lucene_version" : "8.8.2",
+    "minimum_wire_compatibility_version" : "1.2.3",
+    "minimum_index_compatibility_version" : "1.2.3"
+  },
+  "tagline" : "You Know, for Search"
+}
+
+
+
+IN DOCKER
+-----------
+docker network create elastic
+docker pull docker.elastic.co/elasticsearch/elasticsearch:7.13.4
+docker run --name es01-test --net elastic -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.4
+
+docker pull docker.elastic.co/kibana/kibana:7.13.4
+docker run --name kib01-test --net elastic -p 5601:5601 -e "ELASTICSEARCH_HOSTS=http://es01-test:9200" docker.elastic.co/kibana/kibana:7.13.4
+To access Kibana, go to http://localhost:5601
+
+
+###################  KIBANA  ##################################
+                 ---------------
+curl -L -O https://artifacts.elastic.co/downloads/kibana/kibana-7.13.4-linux-x86_64.tar.gz
+tar xzvf kibana-7.13.4-linux-x86_64.tar.gz
+cd kibana-7.13.4-linux-x86_64/
+./bin/kibana
+
+To launch the Kibana web interface, point your browser to port 5601. 
+-------------------------------------------------------------------
+http://localhost:5601.               
+                 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
