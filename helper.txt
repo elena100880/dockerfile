@@ -200,7 +200,7 @@ php -m - проверить установленные модули
 php -i  - содержание php.ini
 
 расширения (без них Composer install не срабатывает):
-sudo apt install php-{bz2,cgi,curl,intl,dev,fpm,gd,imagick,mbstring,mysql,xml,zip}
+sudo apt install php-{bz2,cgi,curl,intl,dev,fpm,gd,imagick,mbstring,mysql,xml,zip,soap}
 sudo apt-get install php-sqlite3
 
 
@@ -236,6 +236,9 @@ sudo mv /home/ub20/.symfony/bin/symfony /usr/local/bin/symfony
 
 ##################   Apache   ##################
                  -----------
+                 
+                 
+                 
 sudo systemctl start apache2
 sudo systemctl stop apache2
 sudo systemctl restart apache2
